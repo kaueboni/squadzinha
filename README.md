@@ -3,6 +3,7 @@
 Versão do [minimal-squad](https://github.com/kaueboni/minimal-squad) com o
 **advisor** do Claude Code: o Sonnet trabalha, o Opus aconselha nos pontos
 difíceis, e a squad para menos sem tirar de você as decisões que importam.
+Visão geral ilustrada: [`docs/funcionamento.html`](docs/funcionamento.html).
 O plugin continua se chamando `minimal-squad` (comando `/minimal-squad:init`);
 o marketplace se chama `squadzinha`.
 

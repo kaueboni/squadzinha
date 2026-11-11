@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>squadzinha — como funciona</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#161a21; --line:#2a303b; --text:#e6e8ec; --mute:#9aa3b2;
+    --sonnet:#e8875a; --haiku:#6ea8ff; --opus:#b598ff; --you:#7fd18b; --stop:#ff6b6b;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  main{max-width:860px;margin:0 auto;padding:28px 18px 64px}
+  h1{font-size:1.9rem;margin:0 0 6px;letter-spacing:-.02em}
+  h2{font-size:1.25rem;margin:44px 0 12px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:1rem;margin:0 0 6px}
+  p{margin:0 0 12px} .mute{color:var(--mute)}
+  code{font-family:var(--mono);font-size:.88em;background:#1e232c;padding:1px 5px;border-radius:4px}
+  pre{font-family:var(--mono);font-size:.85rem;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;overflow-x:auto;margin:0 0 12px}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-family:var(--mono);font-size:.82rem;color:var(--mute);margin:14px 0 0}
+  .legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;background:var(--c)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+  .card{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--c,var(--line));border-radius:8px;padding:12px 14px}
+  .card .tag{font-family:var(--mono);font-size:.75rem;color:var(--c);text-transform:uppercase;letter-spacing:.04em}
+  .card p{margin:4px 0 0;font-size:.92rem;color:var(--mute)}
+  /* fluxo vertical */
+  .flow{display:flex;flex-direction:column;align-items:stretch;gap:0;margin:8px 0}
+  .step{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--c,var(--line));border-radius:8px;padding:10px 14px}
+  .step .who{font-family:var(--mono);font-size:.75rem;color:var(--c)}
+  .step p{margin:2px 0 0;font-size:.92rem;color:var(--mute)}
+  .arrow{align-self:center;width:2px;height:18px;background:var(--line);position:relative}
+  .arrow::after{content:"";position:absolute;bottom:-4px;left:-4px;border:5px solid transparent;border-top-color:var(--line)}
+  .pause{border:1px dashed var(--you);color:var(--you);border-radius:8px;padding:8px 14px;font-family:var(--mono);font-size:.85rem;text-align:center}
+  .branch{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:560px){.branch{grid-template-columns:1fr}}
+  table{width:100%;border-collapse:collapse;font-size:.92rem;margin:0 0 12px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--mute);font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+  .ok{color:var(--you)} .no{color:var(--stop)} .op{color:var(--opus)}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:560px){.two{grid-template-columns:1fr}}
+  .box{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+  .box.op{border-color:var(--opus)} .box.you{border-color:var(--you)}
+  .box ul{margin:6px 0 0;padding-left:18px;color:var(--mute);font-size:.92rem}
+  .box li{margin:3px 0}
+  .scroll{overflow-x:auto}
+  footer{margin-top:48px;color:var(--mute);font-size:.85rem}
+</style>
+</head>
+<body>
+<main>
+
+<h1>squadzinha</h1>
+<p class="mute">Uma squad de subagentes do Claude Code para spec-driven development, com o Opus como advisor. Os agentes trabalham, o Opus aconselha nos pontos difíceis, e você aprova só o que importa.</p>
+<div class="legend">
+  <span style="--c:var(--sonnet)">sonnet · trabalha</span>
+  <span style="--c:var(--haiku)">haiku · lê</span>
+  <span style="--c:var(--opus)">opus · aconselha</span>
+  <span style="--c:var(--you)">você · aprova</span>
+</div>
+
+<h2>1. A squad</h2>
+<p>Seis subagentes instalados em <code>.claude/agents/</code> do projeto. Cada um só pode tocar no que o papel exige.</p>
+<div class="grid">
+  <div class="card" style="--c:var(--haiku)"><div class="tag">haiku · só leitura</div><h3>discovery</h3><p>Mapeia o projeto como ele é hoje: arquivos, padrões, integrações lidas e escritas.</p></div>
+  <div class="card" style="--c:var(--haiku)"><div class="tag">haiku · web</div><h3>researcher</h3><p>Confere na documentação oficial o que o discovery marcou como "a confirmar".</p></div>
+  <div class="card" style="--c:var(--sonnet)"><div class="tag">sonnet · escreve specs</div><h3>tech-lead</h3><p>Escreve a spec da feature e o plano de tarefas. Nunca implementa. Pede revisão de riscos ao Opus antes de entregar.</p></div>
+  <div class="card" style="--c:var(--sonnet)"><div class="tag">sonnet · testes</div><h3>contract-tester</h3><p>Escreve testes de contrato das integrações <em>antes</em> do código, a partir da spec.</p></div>
+  <div class="card" style="--c:var(--sonnet)"><div class="tag">sonnet · código</div><h3>developer</h3><p>Implementa uma tarefa com TDD. Mesmo erro 2x → consulta o Opus.</p></div>
+  <div class="card" style="--c:var(--sonnet)"><div class="tag">sonnet · não edita</div><h3>auditor</h3><p>Roda testes e lint, confere o diff e devolve APROVADO ou REPROVADO.</p></div>
+</div>
+<p class="mute" style="margin-top:10px">Os modelos vêm de <code>model_read</code> (haiku) e <code>model_work</code> (sonnet) no <code>.claude/minimal-squad.json</code>.</p>
+
+<h2>2. O fluxo de uma feature</h2>
+<div class="flow">
+  <div class="step" style="--c:var(--mute)"><div class="who">você</div><strong>/spec &lt;feature&gt;</strong></div>
+  <div class="arrow"></div>
+  <div class="step" style="--c:var(--haiku)"><div class="who">discovery → researcher</div><p>Como o projeto é hoje e o que a documentação confirma.</p></div>
+  <div class="arrow"></div>
+  <div class="step" style="--c:var(--sonnet)"><div class="who">tech-lead <span class="op">+ opus revisa</span></div><p>Escreve <code>specs/NNN-SPEC-&lt;feature&gt;.md</code>.</p></div>
+  <div class="arrow"></div>
+  <div class="pause">⏸ você aprova a spec</div>
+  <div class="arrow"></div>
+  <div class="step" style="--c:var(--mute)"><div class="who">você</div><strong>/build auto NNN</strong></div>
+  <div class="arrow"></div>
+  <div class="step" style="--c:var(--sonnet)"><div class="who">tech-lead <span class="op">+ opus revisa</span></div><p>Gera <code>tasks/plan.md</code> e <code>tasks/todo.md</code>.</p></div>
+  <div class="arrow"></div>
+  <div class="pause">⏸ você aprova o plano (única aprovação do build)</div>
+  <div class="arrow"></div>
+  <div class="step" style="--c:var(--sonnet)"><div class="who">para cada tarefa</div><p>ciclo a–e (abaixo), um commit por tarefa</p></div>
+  <div class="arrow"></div>
+  <div class="step" style="--c:var(--sonnet)"><div class="who">auditor no conjunto</div><p>Revisa a feature inteira, atualiza o PROGRESS.md e lista as suposições decididas com o Opus.</p></div>
+  <div class="arrow"></div>
+  <div class="step" style="--c:var(--mute)"><div class="who">você</div><p><strong>/review</strong>, testes de integração, push e deploy. Agentes nunca fazem isso.</p></div>
+</div>
+
+<h2>3. O ciclo de uma tarefa</h2>
+<div class="flow">
+  <div class="step" style="--c:var(--sonnet)"><div class="who">a · contract-tester (se "Integração: sim")</div><p>Escreve os testes de contrato, confirma que falham e guarda o hash de cada arquivo.</p></div>
+  <div class="arrow"></div>
+  <div class="step" style="--c:var(--sonnet)"><div class="who">b · developer</div><p>RED → GREEN → testes e lint. Não mexe em testes de contrato. <span class="op">Mesmo erro 2x → Opus.</span></p></div>
+  <div class="arrow"></div>
+  <div class="step" style="--c:var(--sonnet)"><div class="who">c · auditor</div><p>Diff, testes, hashes dos contratos, checklist de segurança e escopo.</p></div>
+  <div class="arrow"></div>
+  <div class="branch">
+    <div class="step" style="--c:var(--you)"><div class="who">e · APROVADO</div><p>Marca a tarefa no todo.md e faz commit só dos arquivos dela.</p></div>
+    <div class="step" style="--c:var(--stop)"><div class="who">d · REPROVADO</div><p>Volta ao developer com os itens críticos. Até 2 rodadas.</p></div>
+  </div>
+  <div class="arrow"></div>
+  <div class="step" style="--c:var(--opus)"><div class="who">3ª reprovação · opus</div><p>Recebe os três pareceres e o diff e devolve a causa raiz. O developer faz <strong>uma</strong> última rodada.</p></div>
+  <div class="arrow"></div>
+  <div class="pause" style="border-color:var(--stop);color:var(--stop)">reprovou de novo → para e mostra o parecer + diagnóstico</div>
+</div>
+<p class="mute">Sem o advisor, a squad já pararia na 3ª reprovação.</p>
+
+<h2>4. O que o advisor faz</h2>
+<p>O advisor é um recurso do Claude Code: o modelo que está trabalhando pode consultar um modelo mais forte. O Opus lê a sessão inteira (todas as chamadas e resultados) e devolve um conselho. Ele <strong>não edita arquivos e não aprova nada</strong>: quem aplica é o agente, e quem decide se a squad para é o texto do <code>/build</code>.</p>
+<div class="scroll">
+<table>
+  <tr><th>Momento</th><th>Sem advisor</th><th>Com advisor</th></tr>
+  <tr><td>3ª reprovação do auditor</td><td class="no">para</td><td>diagnóstico do Opus + 1 rodada; só então para</td></tr>
+  <tr><td>Spec ambígua no build</td><td class="no">para</td><td>Opus escolhe a interpretação; a suposição vai no commit e no relatório</td></tr>
+  <tr><td>Mesmo erro 2x</td><td class="mute">—</td><td>developer consulta antes da 3ª tentativa</td></tr>
+  <tr><td>Spec e plano</td><td class="mute">—</td><td>tech-lead pede riscos e lacunas antes de entregar</td></tr>
+</table>
+</div>
+<div class="two">
+  <div class="box op">
+    <h3 class="op">O Opus pode resolver</h3>
+    <ul>
+      <li>causa raiz de reprovação repetida</li>
+      <li>interpretação de spec ambígua (fica registrada)</li>
+      <li>revisão de riscos da spec e do plano</li>
+      <li>erro que se repete no developer</li>
+    </ul>
+  </div>
+  <div class="box you">
+    <h3 class="ok">Só você decide</h3>
+    <ul>
+      <li>aprovar a spec e o plano</li>
+      <li>mudar um teste de contrato</li>
+      <li>"Ask first": schema, contrato, dependência, credencial, infraestrutura</li>
+      <li>o que <code>git revert</code> não desfaz: escrita externa, dados, deploy</li>
+    </ul>
+  </div>
+</div>
+
+<h2>5. Guardrails</h2>
+<div class="grid">
+  <div class="card"><h3>Spec de base fixa</h3><p><code>SPEC.md</code> descreve o projeto; agentes nunca escrevem nele e o pre-commit bloqueia.</p></div>
+  <div class="card"><h3>Pre-commit</h3><p>Busca de segredos, lint e testes em todo commit.</p></div>
+  <div class="card"><h3>Contratos travados</h3><p>O hash dos testes de contrato é conferido pelo auditor; mudou = reprovado.</p></div>
+  <div class="card"><h3>Integração é humana</h3><p>Testes <code>@pytest.mark.integration</code> nunca rodam por agente; fixtures são sempre fictícias.</p></div>
+</div>
+
+<h2>6. Instalar</h2>
+<p>Uma vez por máquina:</p>
+<pre>/plugin marketplace add kaueboni/squadzinha
+/plugin install minimal-squad@squadzinha</pre>
+<p>Uma vez por projeto (repositório git, sem mudanças pendentes):</p>
+<pre>/minimal-squad:init</pre>
+<p class="mute">O init detecta testes, lint e specs, mostra tudo e espera sua confirmação. Depois cria a branch <code>chore/minimal-squad</code> com um commit por etapa, e nada é publicado. Reinicie o Claude Code no fim.</p>
+
+<h2>7. Configuração</h2>
+<p><code>.claude/minimal-squad.json</code>, os campos que mais importam:</p>
+<pre>{
+  "params": {
+    "test_cmd": "pytest -q",
+    "lint_cmd": "ruff check .",
+    "model_read": "haiku",
+    "model_work": "sonnet",
+    "advisor": "opus"          // vazio desliga
+  },
+  "overrides": {
+    "agents": {
+      "developer": { "skills_extra": ["nova-tool-ag-ui"] },
+      "auditor":   { "skills_extra": ["testar-poc"] }
+    }
+  }
+}</pre>
+<p class="mute"><code>advisor</code> vira <code>advisorModel</code> no <code>.claude/settings.json</code>, sem sobrescrever um valor seu, e os subagentes herdam. Skills do projeto ficam em <code>.claude/skills/</code> e entram por <code>skills_extra</code>. Veja o exemplo em <code>examples/poc-ag-ui-strands/</code>.</p>
+
+<footer>squadzinha 0.3.0 · baseado em kaueboni/minimal-squad 0.2.0 · skills de engenharia de addyosmani/agent-skills (MIT)</footer>
+</main>
+</body>
+</html>
