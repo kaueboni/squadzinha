@@ -22,12 +22,24 @@ o marketplace se chama `squadzinha`.
 | Mesmo erro 2x no developer | — | consulta o advisor antes da 3ª tentativa |
 | Spec e plano do tech-lead | — | advisor revisa riscos e lacunas antes de entregar |
 
-O advisor **nunca** decide: aprovação da spec e do plano, mudança em teste de
-contrato, itens "Ask first" do `SPEC.md` (schema, dependência, credencial,
+O advisor **nunca** decide: aprovação da spec e do plano, apagar ou enfraquecer
+testes, itens "Ask first" do `SPEC.md` (schema, dependência, credencial,
 infraestrutura) e nada que `git revert` não desfaça. Ele não edita arquivos.
 
 Requisitos: Claude Code com o advisor (`/advisor`); modelo principal Sonnet 4.6+,
 Opus 4.6+ ou Haiku 4.5. No alvo Copilot o advisor é ignorado.
+
+## Sem contract-tester
+
+A minimal-squad 0.2.0 tinha um sexto agente que escrevia "testes de contrato"
+antes do código. Ele saiu: os testes eram escritos a partir da spec, com
+mocks, e repetiam o TDD do developer sem checar a integração de verdade (isso
+continua sendo dos testes `integration`, que só humanos rodam). Ficou a parte
+útil: em tarefa com "Integração: sim", o auditor exige um teste com mock para
+cada item de "Impacto em integrações" da spec (idempotência, configuração,
+erro do serviço, como desfazer, schema). Num projeto que já tinha a squad,
+`/minimal-squad:init --atualizar` remove o `contract-tester.md` se você não o
+editou; `tests/contract/` fica onde está.
 
 ## Skills do projeto
 
@@ -49,7 +61,7 @@ As skills precisam existir em `.claude/skills/` do projeto. Exemplo completo
 ---
 
 Plugin do Claude Code que **instala no seu projeto** uma squad mínima de
-spec-driven development (SDD): seis subagentes, cinco comandos, skills de
+spec-driven development (SDD): cinco subagentes, cinco comandos, skills de
 engenharia e guardrails. Depois de instalada, a squad vive no repositório
 (`.claude/`), vai para o git e o time inteiro herda. O plugin só é
 necessário para instalar, religar integrações e atualizar.
@@ -60,7 +72,7 @@ Python primeiro (pytest; ruff ou flake8 se o projeto usar).
 
 | Onde | O quê |
 |---|---|
-| `.claude/agents/` | `discovery`, `researcher`, `tech-lead`, `contract-tester`, `developer`, `auditor` |
+| `.claude/agents/` | `discovery`, `researcher`, `tech-lead`, `developer`, `auditor` |
 | `.claude/commands/` | `/spec`, `/build` (e `/build auto`), `/review`, `/test`, `/onboard` |
 | `.claude/skills/` | 10 skills de [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) (MIT), cópia fixa |
 | `.claude/references/` | checklists usados pelas skills |
@@ -68,7 +80,7 @@ Python primeiro (pytest; ruff ou flake8 se o projeto usar).
 | `.githooks/` | pre-commit: spec de base fixa, busca de segredos, lint, testes |
 | `CLAUDE.md` | um bloco curto delimitado (`minimal-squad:start/end`) |
 | `PROGRESS.md` | estado do projeto, histórico, testes e setup (só se não existir) |
-| `specs/`, `tasks/`, `tests/contract/`, `tests/fixtures/` | estrutura do fluxo |
+| `specs/`, `tasks/`, `tests/fixtures/` | estrutura do fluxo |
 | `.claude/minimal-squad.json` | parâmetros confirmados por você |
 | `.claude/minimal-squad.lock.json` | hashes do que o plugin gravou (permite atualizar sem pisar em edições suas) |
 
@@ -79,7 +91,6 @@ Python primeiro (pytest; ruff ou flake8 se o projeto usar).
 | discovery | mapeia o projeto como ele é; só leitura | Read, Grep, Glob | haiku |
 | researcher | confere documentação oficial | WebSearch, WebFetch | haiku |
 | tech-lead | escreve a spec e o plano | Read, Grep, Glob, Write, Edit | sonnet |
-| contract-tester | testes de contrato de integrações, antes do código | Read, Grep, Glob, Write, Bash | sonnet |
 | developer | implementa uma tarefa com TDD | Read, Grep, Glob, Edit, Write, Bash | sonnet |
 | auditor | audita; não edita | Read, Grep, Glob, Bash | sonnet |
 
@@ -90,7 +101,7 @@ Python primeiro (pytest; ruff ou flake8 se o projeto usar).
                        ⏸ você aprova a spec
 /build auto NNN        tech-lead gera tasks/plan.md e tasks/todo.md
                        ⏸ você aprova o plano
-                       por tarefa: contract-tester (se "Integração: sim") → developer → auditor → commit
+                       por tarefa: developer → auditor → commit
 /review                auditor revisa a branch inteira
                        você roda os testes de integração, faz push e deploy
 ```
@@ -202,7 +213,7 @@ squad.
 
 - **cortex-lite**: cada agente recebe as ferramentas de memória do perfil
   dele (mapeamento em `templates/integrations/cortex-lite.json`):
-  discovery e contract-tester → leitor; researcher → pesquisador;
+  discovery → leitor; researcher → pesquisador;
   tech-lead → decisor; developer → executor; auditor → revisor. Ninguém
   recebe `memory_delete`. O `/build auto` exporta a memória para
   `docs/MEMORIA.md` no fim de cada feature.

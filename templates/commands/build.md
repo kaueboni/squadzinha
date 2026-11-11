@@ -1,5 +1,5 @@
 ---
-description: 'Implementa tarefas com a squad (contract-tester → developer → auditor). Use "auto" para executar o plano inteiro com uma única aprovação.'
+description: 'Implementa tarefas com a squad (developer → auditor). Use "auto" para executar o plano inteiro com uma única aprovação.'
 argument-hint: '[auto] [número ou nome da spec]'
 ---
 
@@ -23,34 +23,24 @@ auditoria e commit próprio.
    commitar, guardar ou dizer o que fazer.
 
 ## Ciclo de uma tarefa
-a. Se a tarefa N tem "Integração: sim" em tasks/todo.md:
-   - @"contract-tester (agent)": escreva os testes de contrato da tarefa N.
-   - Confirme que eles FALHAM. Se algum passar sem implementação, peça ao
-     contract-tester para corrigir.
-   - Guarde `git hash-object` de cada arquivo criado em tests/contract/ e
-     tests/fixtures/.
-   Se "Integração: não", vá para b.
-b. @"developer (agent)": implemente a tarefa N.
-c. @"auditor (agent)": audite a tarefa N, passando os hashes de a (se houver).
-d. REPROVADO → mande ao developer só os itens crítico/importante e repita c.
+a. @"developer (agent)": implemente a tarefa N.
+b. @"auditor (agent)": audite a tarefa N.
+c. REPROVADO → mande ao developer só os itens crítico/importante e repita b.
 {{#advisor}}
    No máximo 2 rodadas. Na terceira reprovação, ANTES de parar, consulte o
    advisor ({{ADVISOR}}) com os três pareceres e o diff: peça a causa raiz e
    a correção. Mande o diagnóstico ao developer e faça UMA última rodada
-   (c). Se ainda for REPROVADO, PARE e mostre o último parecer e o
+   (b). Se ainda for REPROVADO, PARE e mostre o último parecer e o
    diagnóstico do advisor.
 {{/advisor}}
 {{^advisor}}
    No máximo 2 rodadas; na terceira reprovação, PARE e mostre o último
    parecer.
-{{/advisor}} Se o developer disser que um teste de contrato está errado,
-   PARE e mostre o argumento: só o usuário decide alterar o teste.
-e. APROVADO → marque a tarefa como concluída em tasks/todo.md, faça
-   `git add` só dos arquivos da tarefa (código, testes do developer, testes
-   de contrato e fixtures da tarefa) e de tasks/todo.md, e commit
-   "feat(NNN): tarefa N — <resumo>". Nunca `git add -A`. Testes de contrato
-   entram no MESMO commit da implementação (sozinhos, falhando, o
-   pre-commit os bloquearia).
+{{/advisor}}
+d. APROVADO → marque a tarefa como concluída em tasks/todo.md, faça
+   `git add` só dos arquivos da tarefa (código, testes e fixtures da
+   tarefa) e de tasks/todo.md, e commit "feat(NNN): tarefa N — <resumo>".
+   Nunca `git add -A`.
 {{#ponytail}}
    Antes do commit, se o Ponytail estiver ativo, revise só o diff desta
    tarefa; nunca corte código fora dela.
@@ -66,7 +56,7 @@ Execute o ciclo para a próxima tarefa pendente e pare.
 4. **Única aprovação.** Mostre o plano e espere um "sim" inequívoco ("go",
    "aprovado"). Respostas vagas ("parece bom") não contam. Aprovado, faça
    um commit só de tasks/.
-5. Execute o ciclo a–e para cada tarefa pendente, na ordem de dependência.
+5. Execute o ciclo a–d para cada tarefa pendente, na ordem de dependência.
 {{#advisor}}
 6. **Spec ambígua.** Antes de parar, consulte o advisor ({{ADVISOR}}) com o
    trecho ambíguo e as interpretações possíveis. Se ele indicar uma

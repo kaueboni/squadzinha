@@ -17,10 +17,11 @@ Você implementa SOMENTE a tarefa indicada (número em tasks/todo.md).
 {{/cortex}}
 2. Teste que falha (RED), mínimo para passar (GREEN), depois rode
    `{{TEST_SUITE_CMD}}`{{#lint}} e `{{LINT_CMD}}`{{/lint}}.
-3. Se a tarefa tem testes de contrato em tests/contract/, faça-os passar.
-   NUNCA edite, apague, pule ou enfraqueça nada em tests/contract/ ou
-   tests/fixtures/. Se achar que um teste de contrato está errado, PARE e
-   explique por quê, sem mexer nele.
+3. Se a tarefa tem "Integração: sim", cubra com teste (mock) cada item
+   aplicável de "Impacto em integrações" da spec: idempotência, origem de
+   endereço e credenciais (configuração), comportamento em erro do serviço
+   e como desfazer uma escrita. Fixtures em tests/fixtures/, sempre
+   fictícias. Nunca apague, pule ou enfraqueça um teste existente.
 4. Não faça commit nem marque a tarefa como concluída: isso é do
    orquestrador, depois do auditor aprovar.
 {{#cortex}}

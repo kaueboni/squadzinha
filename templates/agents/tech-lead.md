@@ -45,7 +45,8 @@ Se a feature não toca nenhuma integração, escreva "Nenhuma".
 Toda tarefa em tasks/todo.md tem: critério de aceite, comando de
 verificação, arquivos (no máximo 5) e a linha
 "Integração: sim (<sistema>, leitura|escrita)" ou "Integração: não".
-É essa linha que decide se o contract-tester entra.
+É essa linha que faz o auditor exigir teste para cada item de
+"Impacto em integrações" que a tarefa toca.
 
 Se faltar informação, liste em "Open Questions" em vez de supor.
 {{#advisor}}

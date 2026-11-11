@@ -12,7 +12,14 @@
 - `tests/test_advisor.py`; `check_templates.py` cobre a flag `advisor`.
 - `examples/poc-ag-ui-strands/`: skills de projeto ligadas via `overrides.agents.*.skills_extra`.
 
+### Removed
+- Agente `contract-tester`, a pasta `tests/contract/` no layout e a conferência de hashes no auditor.
+  O install remove `.claude/agents/contract-tester.md` de projetos existentes se ele não foi editado
+  (senão só avisa).
+
 ### Changed
+- auditor: em tarefa com "Integração: sim", exige teste com mock para cada item aplicável de
+  "Impacto em integrações" da spec; o developer escreve esses testes.
 - Marketplace renomeado para `squadzinha` (`/plugin install minimal-squad@squadzinha`).
 - Alvo Copilot: advisor sempre desligado.
 

@@ -22,7 +22,8 @@
 
 {{/cortex}}
 ## Testes
-- Unitários (developer) e contrato com mock (contract-tester, em `tests/contract/`):
+- Unitários e de integração com mock (developer; o auditor confere a cobertura de
+  "Impacto em integrações"):
   `{{TEST_SUITE_CMD}}`
 - Integração com serviços reais (`@pytest.mark.integration`): **nunca** rodados por
   agentes. Rodar manualmente contra o ambiente de desenvolvimento antes do deploy:

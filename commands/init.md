@@ -95,8 +95,8 @@ Se houver sessões, cruze o resultado com o que cada agente já recebe
 (veja `scripts/common.py`: BASE_TOOLS e BASE_SKILLS) e monte a tabela:
 | item | tipo | vezes | agente | ação (adicionar / permissão / descartar / a confirmar) | motivo |
 Regras, nesta ordem:
-a. Ferramentas que escrevem (Edit, Write, NotebookEdit) só para developer,
-   tech-lead e contract-tester. Nenhum agente recebe Agent.
+a. Ferramentas que escrevem (Edit, Write, NotebookEdit) só para developer
+   e tech-lead. Nenhum agente recebe Agent.
 b. MCP: só ferramentas de LEITURA (get, list, read, search, describe,
    fetch) podem ir para discovery ou researcher. MCP que executa SQL,
    escreve, cria, apaga, roda job ou faz deploy: descartar. Na dúvida:

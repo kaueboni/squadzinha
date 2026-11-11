@@ -50,6 +50,7 @@ from common import (  # noqa: E402
     MAX_SKILLS,
     META_DIRS,
     PENDING_NAME,
+    RETIRED_AGENTS,
     SKILLS,
     TARGETS,
     TEMPLATES,
@@ -256,6 +257,10 @@ class Installer:
         return tools, skills
 
     def step_agents(self):
+        for agent, reason in RETIRED_AGENTS.items():
+            rel = f".github/agents/{agent}.agent.md" if self.copilot else f".claude/agents/{agent}.md"
+            if (self.root / rel).is_file():
+                self.remove_if_managed(rel, reason)
         for agent in AGENTS:
             rel = f".github/agents/{agent}.agent.md" if self.copilot else f".claude/agents/{agent}.md"
             if agent == "researcher" and not self.params["researcher"]:
@@ -475,7 +480,7 @@ class Installer:
 
     def step_layout(self):
         specs = self.params["specs_dir"]
-        for d in [specs, "tasks", "tests/contract", "tests/fixtures"]:
+        for d in [specs, "tasks", "tests/fixtures"]:
             if d in (".", ""):
                 continue
             target = self.root / d
@@ -485,9 +490,8 @@ class Installer:
             self.put(f"{d}/.gitkeep", "", managed=False)
         tests_init = (self.root / "tests" / "__init__.py").is_file()
         if tests_init:
-            for d in ["tests/contract", "tests/fixtures"]:
-                if not (self.root / d / "__init__.py").exists():
-                    self.put(f"{d}/__init__.py", "", managed=False)
+            if not (self.root / "tests/fixtures/__init__.py").exists():
+                self.put("tests/fixtures/__init__.py", "", managed=False)
         gi = self.root / ".gitignore"
         lines = gi.read_text(encoding="utf-8").splitlines() if gi.is_file() else []
         wanted = [f"{self.pending_rel}/"] + list(self.config.get("gitignore_extra", []))

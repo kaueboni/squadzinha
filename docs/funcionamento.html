@@ -62,12 +62,11 @@
 </div>
 
 <h2>1. A squad</h2>
-<p>Seis subagentes instalados em <code>.claude/agents/</code> do projeto. Cada um só pode tocar no que o papel exige.</p>
+<p>Cinco subagentes instalados em <code>.claude/agents/</code> do projeto. Cada um só pode tocar no que o papel exige.</p>
 <div class="grid">
   <div class="card" style="--c:var(--haiku)"><div class="tag">haiku · só leitura</div><h3>discovery</h3><p>Mapeia o projeto como ele é hoje: arquivos, padrões, integrações lidas e escritas.</p></div>
   <div class="card" style="--c:var(--haiku)"><div class="tag">haiku · web</div><h3>researcher</h3><p>Confere na documentação oficial o que o discovery marcou como "a confirmar".</p></div>
   <div class="card" style="--c:var(--sonnet)"><div class="tag">sonnet · escreve specs</div><h3>tech-lead</h3><p>Escreve a spec da feature e o plano de tarefas. Nunca implementa. Pede revisão de riscos ao Opus antes de entregar.</p></div>
-  <div class="card" style="--c:var(--sonnet)"><div class="tag">sonnet · testes</div><h3>contract-tester</h3><p>Escreve testes de contrato das integrações <em>antes</em> do código, a partir da spec.</p></div>
   <div class="card" style="--c:var(--sonnet)"><div class="tag">sonnet · código</div><h3>developer</h3><p>Implementa uma tarefa com TDD. Mesmo erro 2x → consulta o Opus.</p></div>
   <div class="card" style="--c:var(--sonnet)"><div class="tag">sonnet · não edita</div><h3>auditor</h3><p>Roda testes e lint, confere o diff e devolve APROVADO ou REPROVADO.</p></div>
 </div>
@@ -89,7 +88,7 @@
   <div class="arrow"></div>
   <div class="pause">⏸ você aprova o plano (única aprovação do build)</div>
   <div class="arrow"></div>
-  <div class="step" style="--c:var(--sonnet)"><div class="who">para cada tarefa</div><p>ciclo a–e (abaixo), um commit por tarefa</p></div>
+  <div class="step" style="--c:var(--sonnet)"><div class="who">para cada tarefa</div><p>ciclo a–d (abaixo), um commit por tarefa</p></div>
   <div class="arrow"></div>
   <div class="step" style="--c:var(--sonnet)"><div class="who">auditor no conjunto</div><p>Revisa a feature inteira, atualiza o PROGRESS.md e lista as suposições decididas com o Opus.</p></div>
   <div class="arrow"></div>
@@ -98,15 +97,13 @@
 
 <h2>3. O ciclo de uma tarefa</h2>
 <div class="flow">
-  <div class="step" style="--c:var(--sonnet)"><div class="who">a · contract-tester (se "Integração: sim")</div><p>Escreve os testes de contrato, confirma que falham e guarda o hash de cada arquivo.</p></div>
+  <div class="step" style="--c:var(--sonnet)"><div class="who">a · developer</div><p>RED → GREEN → testes e lint. Com "Integração: sim", testa com mock cada item de "Impacto em integrações". <span class="op">Mesmo erro 2x → Opus.</span></p></div>
   <div class="arrow"></div>
-  <div class="step" style="--c:var(--sonnet)"><div class="who">b · developer</div><p>RED → GREEN → testes e lint. Não mexe em testes de contrato. <span class="op">Mesmo erro 2x → Opus.</span></p></div>
-  <div class="arrow"></div>
-  <div class="step" style="--c:var(--sonnet)"><div class="who">c · auditor</div><p>Diff, testes, hashes dos contratos, checklist de segurança e escopo.</p></div>
+  <div class="step" style="--c:var(--sonnet)"><div class="who">b · auditor</div><p>Diff, testes, lint, checklist de segurança e escopo. Item de integração sem teste = reprovado.</p></div>
   <div class="arrow"></div>
   <div class="branch">
-    <div class="step" style="--c:var(--you)"><div class="who">e · APROVADO</div><p>Marca a tarefa no todo.md e faz commit só dos arquivos dela.</p></div>
-    <div class="step" style="--c:var(--stop)"><div class="who">d · REPROVADO</div><p>Volta ao developer com os itens críticos. Até 2 rodadas.</p></div>
+    <div class="step" style="--c:var(--you)"><div class="who">d · APROVADO</div><p>Marca a tarefa no todo.md e faz commit só dos arquivos dela.</p></div>
+    <div class="step" style="--c:var(--stop)"><div class="who">c · REPROVADO</div><p>Volta ao developer com os itens críticos. Até 2 rodadas.</p></div>
   </div>
   <div class="arrow"></div>
   <div class="step" style="--c:var(--opus)"><div class="who">3ª reprovação · opus</div><p>Recebe os três pareceres e o diff e devolve a causa raiz. O developer faz <strong>uma</strong> última rodada.</p></div>
@@ -140,7 +137,7 @@
     <h3 class="ok">Só você decide</h3>
     <ul>
       <li>aprovar a spec e o plano</li>
-      <li>mudar um teste de contrato</li>
+      <li>apagar ou enfraquecer um teste</li>
       <li>"Ask first": schema, contrato, dependência, credencial, infraestrutura</li>
       <li>o que <code>git revert</code> não desfaz: escrita externa, dados, deploy</li>
     </ul>
@@ -151,7 +148,7 @@
 <div class="grid">
   <div class="card"><h3>Spec de base fixa</h3><p><code>SPEC.md</code> descreve o projeto; agentes nunca escrevem nele e o pre-commit bloqueia.</p></div>
   <div class="card"><h3>Pre-commit</h3><p>Busca de segredos, lint e testes em todo commit.</p></div>
-  <div class="card"><h3>Contratos travados</h3><p>O hash dos testes de contrato é conferido pelo auditor; mudou = reprovado.</p></div>
+  <div class="card"><h3>Integrações cobertas</h3><p>Tarefa que toca integração precisa de teste para cada item de "Impacto em integrações"; o auditor confere.</p></div>
   <div class="card"><h3>Integração é humana</h3><p>Testes <code>@pytest.mark.integration</code> nunca rodam por agente; fixtures são sempre fictícias.</p></div>
 </div>
 

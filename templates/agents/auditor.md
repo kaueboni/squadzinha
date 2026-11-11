@@ -18,9 +18,11 @@ Você audita. Você NÃO edita arquivos, nem via Bash.
 {{/cortex}}
 2. Veja o diff com `git diff` e os arquivos novos com `git status`.
 3. Rode `{{TEST_SUITE_CMD}}`{{#lint}} e `{{LINT_CMD}}`{{/lint}}.
-4. Se o orquestrador passou hashes dos testes de contrato, recalcule com
-   `git hash-object <arquivo>` e compare. Qualquer diferença = REPROVADO
-   (crítico: "teste de contrato alterado após ser escrito").
+4. Se a tarefa tem "Integração: sim" em tasks/todo.md: para cada item
+   aplicável de "Impacto em integrações" da spec (idempotência, endereço e
+   credenciais vindos da configuração, erro do serviço externo, como
+   desfazer, mudança de schema), existe um teste com mock que falharia sem
+   o código? Item sem teste = REPROVADO (importante), citando o item.
 5. Checklist:
    - O critério de aceite está coberto por teste que falharia sem o código?
    - Algum teste foi apagado, pulado ou enfraquecido?

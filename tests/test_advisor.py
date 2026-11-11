@@ -89,5 +89,52 @@ class Advisor(unittest.TestCase):
             self.assertNotIn("advisor", path.read_text(encoding="utf-8").lower(), path)
 
 
+class ContractTesterRemovido(unittest.TestCase):
+    """Projetos instalados com a 0.2.0 tinham .claude/agents/contract-tester.md."""
+
+    def setUp(self):
+        base = tempfile.mkdtemp(prefix="squad retired ")
+        self.addCleanup(shutil.rmtree, base, ignore_errors=True)
+        self.proj = Path(base) / "projeto"
+        (self.proj / "tests").mkdir(parents=True)
+        git(self.proj, "init", "-q")
+        code, out = run_install(self.proj, "--init-config")
+        self.assertEqual(code, 0, out)
+        self.agent = self.proj / ".claude" / "agents" / "contract-tester.md"
+        self.agent.parent.mkdir(parents=True, exist_ok=True)
+        self.agent.write_text("---\nname: contract-tester\n---\nantigo\n", encoding="utf-8")
+
+    def lock(self, content):
+        sys.path.insert(0, str(ROOT / "scripts"))
+        from common import sha256_text
+        lock = self.proj / ".claude" / "minimal-squad.lock.json"
+        lock.write_text(json.dumps({"files": {".claude/agents/contract-tester.md": sha256_text(content)}}),
+                        encoding="utf-8")
+
+    def test_remove_se_nao_foi_editado(self):
+        self.lock(self.agent.read_text(encoding="utf-8"))
+        code, out = run_install(self.proj, "--steps", "agents")
+        self.assertEqual(code, 0, out)
+        self.assertFalse(self.agent.exists())
+        self.assertTrue(any("contract-tester" in r for r in out.get("removed", [])), out)
+        self.assertFalse((self.proj / ".claude" / "agents" / "developer.md").read_text(
+            encoding="utf-8").count("tests/contract"))
+
+    def test_mantem_se_foi_editado(self):
+        self.lock("outro conteúdo")
+        code, out = run_install(self.proj, "--steps", "agents")
+        self.assertEqual(code, 0, out)
+        self.assertTrue(self.agent.exists())
+        self.assertTrue(any("contract-tester" in w for w in out["warnings"]), out["warnings"])
+
+    def test_instalacao_nova_nao_menciona(self):
+        self.agent.unlink()
+        code, out = run_install(self.proj, "--steps", "agents,layout")
+        self.assertEqual(code, 0, out)
+        self.assertFalse(any("contract-tester" in s for s in out["skipped"]), out["skipped"])
+        self.assertFalse((self.proj / "tests" / "contract").exists())
+        self.assertEqual(len(list((self.proj / ".claude" / "agents").glob("*.md"))), 5)
+
+
 if __name__ == "__main__":
     unittest.main()

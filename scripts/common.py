@@ -45,7 +45,9 @@ COPILOT_PROMPT_TOOLS = {
 }
 COPILOT_EXTRA_PROMPTS = ["base-spec"]
 
-AGENTS = ["discovery", "researcher", "tech-lead", "contract-tester", "developer", "auditor"]
+AGENTS = ["discovery", "researcher", "tech-lead", "developer", "auditor"]
+# Agentes de versões anteriores: removidos do projeto no install, se não foram editados.
+RETIRED_AGENTS = {"contract-tester": "removido na 0.3.0 (a checagem de integrações ficou com o auditor)"}
 COMMANDS = ["spec", "build", "review", "test", "onboard"]
 SKILLS = [
     "spec-driven-development", "planning-and-task-breakdown", "incremental-implementation",
@@ -58,7 +60,6 @@ BASE_TOOLS = {
     "discovery": ["Read", "Grep", "Glob"],
     "researcher": ["WebSearch", "WebFetch"],
     "tech-lead": ["Read", "Grep", "Glob", "Write", "Edit"],
-    "contract-tester": ["Read", "Grep", "Glob", "Write", "Bash"],
     "developer": ["Read", "Grep", "Glob", "Edit", "Write", "Bash"],
     "auditor": ["Read", "Grep", "Glob", "Bash"],
 }
@@ -66,12 +67,11 @@ BASE_SKILLS = {
     "discovery": ["context-engineering"],
     "researcher": ["source-driven-development"],
     "tech-lead": ["spec-driven-development", "planning-and-task-breakdown"],
-    "contract-tester": ["test-driven-development"],
     "developer": ["incremental-implementation", "test-driven-development", "debugging-and-error-recovery"],
     "auditor": ["code-review-and-quality", "security-and-hardening"],
 }
 WRITE_TOOLS = {"Edit", "Write", "NotebookEdit", "MultiEdit"}
-WRITE_ALLOWED = {"tech-lead", "contract-tester", "developer"}
+WRITE_ALLOWED = {"tech-lead", "developer"}
 MAX_SKILLS = 4
 
 DEFAULT_PARAMS = {

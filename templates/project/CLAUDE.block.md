@@ -10,7 +10,7 @@
 {{/copilot}}
 - As convenções deste projeto prevalecem sobre os padrões das skills.
 {{#advisor}}
-- Advisor ({{ADVISOR}}): consulte antes de um plano, antes de dar uma tarefa como concluída e quando o mesmo erro aparecer 2x. Ele aconselha; quem edita é você. Ele nunca substitui a aprovação humana da spec, do plano, de testes de contrato, de itens "Ask first" ou de ações irreversíveis.
+- Advisor ({{ADVISOR}}): consulte antes de um plano, antes de dar uma tarefa como concluída e quando o mesmo erro aparecer 2x. Ele aconselha; quem edita é você. Ele nunca substitui a aprovação humana da spec, do plano, de apagar ou enfraquecer testes, de itens "Ask first" ou de ações irreversíveis.
 {{/advisor}}
 - Nunca: push, deploy, ler `.env`, dados reais em fixtures, testes ou commits.
 <!-- minimal-squad:end -->
