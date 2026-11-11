@@ -48,3 +48,10 @@ verificação, arquivos (no máximo 5) e a linha
 É essa linha que decide se o contract-tester entra.
 
 Se faltar informação, liste em "Open Questions" em vez de supor.
+{{#advisor}}
+
+Advisor ({{ADVISOR}}): antes de entregar a spec e antes de entregar o plano,
+consulte o advisor pedindo riscos, lacunas e tarefas mal cortadas. Aplique o
+que fizer sentido e cite em uma linha o que mudou por causa dele. A
+aprovação continua sendo do usuário.
+{{/advisor}}

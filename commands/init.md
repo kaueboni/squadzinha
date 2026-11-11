@@ -52,7 +52,11 @@ Mostre ao usuário, de forma compacta:
   - `pytest_config.file` vazio → vou criar a configuração do marcador
     `integration` (em pyproject.toml se existir, senão pytest.ini);
   - integrações marcadas como prováveis: peça confirmação (a detecção é
-    por melhor esforço).
+    por melhor esforço);
+  - `params.advisor` (padrão `opus`): explique em uma linha que o advisor é
+    consultado na 3ª reprovação do auditor e em spec ambígua para a squad
+    parar menos, e que vazio desliga. Ele vai para `advisorModel` no
+    `.claude/settings.json` (sem sobrescrever um valor seu).
 Pergunte se confirma ou o que ajustar (use AskUserQuestion se disponível).
 PARE e espere a resposta. Não continue sem confirmação explícita.
 

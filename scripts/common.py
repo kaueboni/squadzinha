@@ -83,6 +83,8 @@ DEFAULT_PARAMS = {
     "model_read": "haiku",
     "model_work": "sonnet",
     "effort": "medium",
+    # Advisor do Claude Code (opus, sonnet, fable ou id completo). Vazio = desligado.
+    "advisor": "opus",
     "specs_dir": "specs",
     "base_spec": "SPEC.md",
     "researcher": True,

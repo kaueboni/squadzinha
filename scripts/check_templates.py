@@ -19,13 +19,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import AGENTS, COMMANDS, COPILOT_EXTRA_PROMPTS, TEMPLATES, render, utf8_stdio  # noqa: E402
 from install import Installer  # noqa: E402
 
-FLAGS = ["cortex", "agentmeter", "ponytail", "rtk", "researcher", "lint", "refs", "copilot"]
+FLAGS = ["cortex", "agentmeter", "ponytail", "rtk", "researcher", "lint", "refs", "copilot", "advisor"]
 VARS = {
     "MODEL_READ": "haiku", "MODEL_WORK": "sonnet", "EFFORT": "medium",
     "TEST_SUITE_CMD": 'pytest -q -m "not integration"', "TEST_INTEGRATION_CMD": "pytest -q -m integration",
     "LINT_CMD": "ruff check .", "SPECS_DIR": "specs", "BASE_SPEC": "SPEC.md", "DOCS": "docs.python.org",
     "INTEGRATION_REFS": "docs/ref.md", "PYTHON": "python3", "NEXT_SPEC": "014", "PLUGIN_VERSION": "0",
-    "TOOLS": "Read, Grep", "SKILLS": "  - a\n  - b", "INSTRUCTIONS_FILE": "CLAUDE.md",
+    "TOOLS": "Read, Grep", "SKILLS": "  - a\n  - b", "INSTRUCTIONS_FILE": "CLAUDE.md", "ADVISOR": "opus",
 }
 COPILOT = Installer(Path("/nonexistent-minimal-squad"), {}, check=True, target="copilot")
 

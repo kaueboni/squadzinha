@@ -33,8 +33,17 @@ a. Se a tarefa N tem "Integração: sim" em tasks/todo.md:
 b. @"developer (agent)": implemente a tarefa N.
 c. @"auditor (agent)": audite a tarefa N, passando os hashes de a (se houver).
 d. REPROVADO → mande ao developer só os itens crítico/importante e repita c.
+{{#advisor}}
+   No máximo 2 rodadas. Na terceira reprovação, ANTES de parar, consulte o
+   advisor ({{ADVISOR}}) com os três pareceres e o diff: peça a causa raiz e
+   a correção. Mande o diagnóstico ao developer e faça UMA última rodada
+   (c). Se ainda for REPROVADO, PARE e mostre o último parecer e o
+   diagnóstico do advisor.
+{{/advisor}}
+{{^advisor}}
    No máximo 2 rodadas; na terceira reprovação, PARE e mostre o último
-   parecer. Se o developer disser que um teste de contrato está errado,
+   parecer.
+{{/advisor}} Se o developer disser que um teste de contrato está errado,
    PARE e mostre o argumento: só o usuário decide alterar o teste.
 e. APROVADO → marque a tarefa como concluída em tasks/todo.md, faça
    `git add` só dos arquivos da tarefa (código, testes do developer, testes
@@ -58,6 +67,22 @@ Execute o ciclo para a próxima tarefa pendente e pare.
    "aprovado"). Respostas vagas ("parece bom") não contam. Aprovado, faça
    um commit só de tasks/.
 5. Execute o ciclo a–e para cada tarefa pendente, na ordem de dependência.
+{{#advisor}}
+6. **Spec ambígua.** Antes de parar, consulte o advisor ({{ADVISOR}}) com o
+   trecho ambíguo e as interpretações possíveis. Se ele indicar uma
+   interpretação que NÃO cai em nenhum item abaixo, siga com ela e registre
+   a suposição na mensagem do commit da tarefa
+   ("Suposição (advisor): ...") e na lista do relatório final. Se ele não
+   resolver, ou a interpretação cair num item abaixo, pare.
+7. **Pare e pergunte** (o advisor NÃO decide estes) quando: a tarefa exigir algo do
+   "Ask first" do {{BASE_SPEC}} (mudança de schema ou contrato, permissão ou
+   credencial nova, dependência nova, configuração de infraestrutura,
+   remover código fora do escopo); ou houver algo que `git revert` não
+   desfaça (escritas em sistemas externos, deploy, dados).
+   Resolvido o bloqueio, o usuário roda `/build auto` de novo e você
+   continua da próxima tarefa pendente.
+{{/advisor}}
+{{^advisor}}
 6. **Pare e pergunte** quando: a spec for ambígua; a tarefa exigir algo do
    "Ask first" do {{BASE_SPEC}} (mudança de schema ou contrato, permissão ou
    credencial nova, dependência nova, configuração de infraestrutura,
@@ -65,7 +90,13 @@ Execute o ciclo para a próxima tarefa pendente e pare.
    desfaça (escritas em sistemas externos, deploy, dados).
    Resolvido o bloqueio, o usuário roda `/build auto` de novo e você
    continua da próxima tarefa pendente.
+{{/advisor}}
+{{#advisor}}
+8. **Ao final:**
+{{/advisor}}
+{{^advisor}}
 7. **Ao final:**
+{{/advisor}}
    - @"auditor (agent)" sobre o conjunto
      (`git diff <commit do plano>..HEAD`);
    - atualize PROGRESS.md (Estado atual e Histórico de features);
@@ -80,7 +111,8 @@ Execute o ciclo para a próxima tarefa pendente e pare.
 {{#agentmeter}}
    - sugira `/agentmeter:tokens --sessao` para ver o custo por subagente;
 {{/agentmeter}}
-   - resuma: tarefas, testes, commits, pendências.
+   - resuma: tarefas, testes, commits, pendências{{#advisor}} e as suposições
+     decididas com o advisor (revise-as no /review){{/advisor}}.
    Nunca rode testes de integração, push ou deploy.
 
 Se algum passo falhar sem causa óbvia, siga a skill debugging-and-error-recovery.

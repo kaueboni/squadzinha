@@ -133,6 +133,7 @@ class Installer:
             "cortex": i["cortex_lite"], "agentmeter": i["agentmeter"], "ponytail": i["ponytail"],
             "rtk": i["rtk"], "researcher": bool(p["researcher"]), "lint": bool(p["lint_cmd"].strip()),
             "refs": bool(p.get("integration_refs")), "copilot": self.copilot,
+            "advisor": bool(str(p.get("advisor") or "").strip()) and not self.copilot,
         }
 
     def variables(self, extra=None):
@@ -144,7 +145,7 @@ class Installer:
             "DOCS": ", ".join(p.get("docs") or ["docs.python.org"]),
             "INTEGRATION_REFS": ", ".join(p.get("integration_refs") or []),
             "PYTHON": p["python"], "NEXT_SPEC": self.config.get("next_spec", "NNN"),
-            "PLUGIN_VERSION": plugin_version(),
+            "PLUGIN_VERSION": plugin_version(), "ADVISOR": str(p.get("advisor") or "").strip(),
             "INSTRUCTIONS_FILE": ".github/copilot-instructions.md" if self.copilot else "CLAUDE.md",
         }
         if extra:
@@ -449,6 +450,15 @@ class Installer:
             if item not in cur_deny:
                 cur_deny.append(item)
                 added.append(("deny", item))
+        advisor = str(self.params.get("advisor") or "").strip()
+        if advisor:
+            atual = data.get("advisorModel")
+            if atual is None:
+                data["advisorModel"] = advisor
+                added.append(("advisorModel", advisor))
+            elif atual != advisor:
+                self.report["warnings"].append(
+                    f"{rel}: advisorModel já é {atual!r}; mantive (params.advisor = {advisor!r})")
         blocked = [d for d in cur_deny if d == "Agent" or d.startswith("Agent(")]
         if blocked:
             self.report["warnings"].append(
@@ -461,7 +471,7 @@ class Installer:
             return
         content = json.dumps(data, indent=2, ensure_ascii=False) + "\n"
         self._write(path, content)
-        self.report["updated" if existed else "created"].append(f"{rel} (+{len(added)} regras)")
+        self.report["updated" if existed else "created"].append(f"{rel} (+{len(added)} itens)")
 
     def step_layout(self):
         specs = self.params["specs_dir"]

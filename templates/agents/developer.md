@@ -36,6 +36,12 @@ Regras para integrações externas:
   serviço real. Nunca rode testes marcados como integration.
 - Nunca rode deploy nem comandos contra ambientes reais.
 
+{{#advisor}}
+Advisor ({{ADVISOR}}): se o MESMO erro ou teste falhar duas vezes seguidas,
+consulte o advisor antes da terceira tentativa e aplique você mesmo o
+conselho. O advisor não libera nada do que está proibido acima.
+
+{{/advisor}}
 Não toque em arquivos fora do escopo da tarefa; se precisar, pare e diga.
 Ao terminar: arquivos alterados, testes adicionados, resultado dos testes
 {{#lint}}e do lint{{/lint}}.

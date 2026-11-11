@@ -1,4 +1,51 @@
-# minimal-squad
+# squadzinha
+
+Versão do [minimal-squad](https://github.com/kaueboni/minimal-squad) com o
+**advisor** do Claude Code: o Sonnet trabalha, o Opus aconselha nos pontos
+difíceis, e a squad para menos sem tirar de você as decisões que importam.
+O plugin continua se chamando `minimal-squad` (comando `/minimal-squad:init`);
+o marketplace se chama `squadzinha`.
+
+> Se o `minimal-squad` original estiver instalado na mesma máquina, desinstale
+> antes (`/plugin uninstall minimal-squad@minimal-squad`): os dois usam o mesmo nome.
+
+## O que o advisor muda
+
+`params.advisor` (padrão `opus`; vazio desliga) vai para `advisorModel` no
+`.claude/settings.json`. Os subagentes herdam o advisor.
+
+| Momento | Sem advisor | Com advisor |
+|---|---|---|
+| 3ª reprovação do auditor | para | consulta o advisor (causa raiz), faz **uma** última rodada; só para se reprovar de novo |
+| Spec ambígua no `/build auto` | para | o advisor escolhe a interpretação; a suposição vai no commit e no relatório final |
+| Mesmo erro 2x no developer | — | consulta o advisor antes da 3ª tentativa |
+| Spec e plano do tech-lead | — | advisor revisa riscos e lacunas antes de entregar |
+
+O advisor **nunca** decide: aprovação da spec e do plano, mudança em teste de
+contrato, itens "Ask first" do `SPEC.md` (schema, dependência, credencial,
+infraestrutura) e nada que `git revert` não desfaça. Ele não edita arquivos.
+
+Requisitos: Claude Code com o advisor (`/advisor`); modelo principal Sonnet 4.6+,
+Opus 4.6+ ou Haiku 4.5. No alvo Copilot o advisor é ignorado.
+
+## Skills do projeto
+
+A squad traz skills genéricas. Skills do seu projeto (stack, armadilhas,
+como validar) entram pelos `overrides` do `.claude/minimal-squad.json`:
+
+```json
+"overrides": {
+  "agents": {
+    "developer": { "skills_extra": ["nova-tool-ag-ui", "next16-copilotkit"] },
+    "auditor":   { "skills_extra": ["testar-poc"] }
+  }
+}
+```
+
+As skills precisam existir em `.claude/skills/` do projeto. Exemplo completo
+(PoC AG-UI + Strands, Next.js 16 + CopilotKit): [`examples/poc-ag-ui-strands/`](examples/poc-ag-ui-strands/).
+
+---
 
 Plugin do Claude Code que **instala no seu projeto** uma squad mínima de
 spec-driven development (SDD): seis subagentes, cinco comandos, skills de
@@ -65,8 +112,8 @@ A ordem não é obrigatória: se instalar um parceiro depois, rode
 ### Instalar o plugin
 
 ```
-/plugin marketplace add kaueboni/minimal-squad
-/plugin install minimal-squad@minimal-squad
+/plugin marketplace add kaueboni/squadzinha
+/plugin install minimal-squad@squadzinha
 ```
 
 Requisitos: Claude Code com suporte a plugins, git, Python 3.9+ no PATH
@@ -100,7 +147,7 @@ Copilot CLI e cloud agent). Não precisa do Claude Code: o instalador roda
 direto com Python.
 
 ```
-git clone https://github.com/kaueboni/minimal-squad ~/minimal-squad
+git clone https://github.com/kaueboni/squadzinha ~/minimal-squad
 cd <seu projeto>                       # repositório git, sem mudanças pendentes
 git checkout -b chore/minimal-squad
 python ~/minimal-squad/scripts/install.py --project . --init-config --target copilot

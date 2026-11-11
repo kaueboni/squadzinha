@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.3.0] - 2026-11-11 (squadzinha)
+
+### Added
+- `params.advisor` (padrão `opus`, vazio desliga): grava `advisorModel` no `.claude/settings.json`
+  sem sobrescrever um valor do usuário (avisa se for diferente).
+- `/build`: na 3ª reprovação do auditor, consulta o advisor e faz uma última rodada antes de parar;
+  no `/build auto`, spec ambígua é resolvida com o advisor e a suposição vai no commit e no relatório.
+- developer consulta o advisor quando o mesmo erro aparece 2x; tech-lead pede revisão de riscos
+  antes de entregar spec e plano; bloco do CLAUDE.md explica o que o advisor nunca decide.
+- `tests/test_advisor.py`; `check_templates.py` cobre a flag `advisor`.
+- `examples/poc-ag-ui-strands/`: skills de projeto ligadas via `overrides.agents.*.skills_extra`.
+
+### Changed
+- Marketplace renomeado para `squadzinha` (`/plugin install minimal-squad@squadzinha`).
+- Alvo Copilot: advisor sempre desligado.
+
 ## [0.2.0] - 2026-10-26
 
 ### Added
